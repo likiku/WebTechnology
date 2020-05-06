@@ -1,0 +1,88 @@
+<html>
+<head></head>
+    <body>
+    <script>
+        if(sessionStorage.getItem("username")==null){
+    var username= prompt("What is your name ?");
+    sessionStorage.setItem("username",username);
+    localStorage.setItem("username",username);
+    document.cookie="username="+username;
+    }
+    </script>
+    
+    <div><h1><span id="username"></span> Shopping list</h1></div>
+        <div>
+        <div>
+        <input type="text" placeholder="Item Name" id="item-name" />    
+        <input type="number" placeholder="Quantity" id="item-quan" />    
+      <button onclick="add_item_toList()">Add Item</button>
+        </div>
+        </div>
+    <div>
+    <table >
+    <thead>
+    <th>No.</th>    
+    <th>Product</th>    
+    <th>Quantity</th>    
+    </thead>
+        <tbody id="tbl">
+        
+        </tbody>
+    </table>    
+    </div>
+        <script>
+        var chVal= sessionStorage.getItem("username");
+        document.getElementById("username").innerHTML=chVal;
+        </script>
+        <script>
+        var userid=sessionStorage.getItem("username");
+        if(localStorage.getItem(userid)!=false && localStorage.getItem(userid)!=null){
+          var tbData=  localStorage.getItem(userid);
+        tbData= JSON.parse(tbData);
+        for(var i=0;i<=tbData.length;i++){
+            var product= tbData[i][0];
+            var quan= tbData[i][1];
+           var newHTML = "<tr onclick='delete_item(this)'><td>"+(i+1)+"</td><td>"+product+"</td><td>"+quan+"</td></tr>";
+            document.getElementById("tbl").innerHTML+=newHTML;
+        }
+        }
+        </script>
+        <script>
+        function add_item_toList(){
+              var itemJSON=[];
+            var userid=sessionStorage.getItem("username");
+            if(localStorage.getItem(userid)!=false && localStorage.getItem(userid)!=null){
+               itemJSON=JSON.parse(localStorage.getItem(userid));
+            }
+           var item=document.getElementById("item-name").value;
+           var quantity=document.getElementById("item-quan").value;
+            var arr=[];
+            arr[0]=item;
+            arr[1]=quantity;
+            itemJSON.push(arr);
+            var newJSON=JSON.stringify(itemJSON);
+            localStorage.setItem(userid,newJSON);
+             var newHTML = "<tr onclick='delete_item(this)'><td>"+itemJSON.length+"</td><td>"+item+"</td><td>"+quantity+"</td></tr>";
+            document.getElementById("tbl").innerHTML+=newHTML;
+        }
+        </script>
+        <script>
+        function delete_item(item){
+            if(confirm("Delete Item ?")==false){
+              return;  
+            }
+          var key_ = item.children[0].innerHTML;
+        var userid=sessionStorage.getItem("username");
+        var tbData=  localStorage.getItem(userid);
+        tbData= JSON.parse(tbData);
+        var index=tbData.indexOf(Number(key_));
+        tbData.splice(index,1);
+        var newJSON=JSON.stringify(tbData);
+        localStorage.setItem(userid,newJSON);
+            //remove item from table
+        item.remove();
+        
+        }
+        </script>
+    </body>
+</html>
